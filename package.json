@@ -1,6 +1,6 @@
 {
   "name": "mysql-live-select",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Live updating MySQL SELECT statements",
   "main": "lib/LiveMysql.js",
   "repository": "https://github.com/vlasky/mysql-live-select",
@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.15",
-    "mysql2": "^v1.1.2",
+    "mysql2": "^v1.7.0",
     "zongji": "git://github.com/vlasky/zongji.git#bb28724b4a889f35705cb140db6c4f88a5641b58",
     "ejson": "^2.2.0"
   },
