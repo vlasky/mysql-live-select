@@ -19,7 +19,7 @@ This package has been tested to work in MySQL 5.1, 5.5, 5.6, and 5.7. Expected s
 
 * Add the package to your project:
   ```bash
-  $ npm install vlasky/mysql-live-select
+  $ npm install @vlasky/mysql-live-select
   ```
 
 * Enable MySQL binlog in `my.cnf`, restart MySQL server after making the changes.
