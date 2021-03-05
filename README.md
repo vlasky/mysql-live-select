@@ -1,19 +1,21 @@
 # mysql-live-select
 
-NPM Package to provide events when a MySQL select statement result set changes.
+mysql-live-select emits Node.js events when a MySQL query result set changes.
+
+It works by monitoring table row changes written to the MySQL binary log. Each row change is passed to a user-defined trigger function. When the trigger function returns true, its associated query is re-run and the result set is diffed with the previous result set.
 
 NOTE: This version of mysql-live-select differs from numtel's original package in that result sets are treated as dictionaries rather than arrays. The original package's diffing emits incorrect (with respect to the primary key) events when rows are inserted or deleted at any position other than the end of the array. In this version, the identity of each row is determined by a `LiveMysqlKeySelector` that is passed into the `select` function. The most common use case is `LiveMysqlKeySelector.Columns([primary_key_column])`, which ensures that row insertions and deletions are detected based on the value of `primary_key_column`.
 
 There are other changes and additional features. See below for more details.
 
-Built using the [`zongji` Binlog Tailer](https://github.com/nevill/zongji) and [`node-mysql2`](https://github.com/sidorares/node-mysql2) projects.
+Built using vlasky's fork of [`zongji` Binlog Tailer](https://github.com/vlasky/zongji) and [`node-mysql2`](https://github.com/sidorares/node-mysql2).
 
 * [Example Application using Express, SockJS and React](https://github.com/numtel/reactive-mysql-example)
-* [Meteor package for reactive MySQL](https://github.com/numtel/meteor-mysql)
+* [Meteor package for reactive MySQL](https://github.com/vlasky/meteor-mysql)
 * [NPM Package for Sails.js connection adapter integration](https://github.com/numtel/sails-mysql-live-select)
 * [Analogous package for PostgreSQL, `pg-live-select`](https://github.com/numtel/pg-live-select)
 
-This package has been tested to work in MySQL 5.1, 5.5, 5.6, and 5.7. Expected support is all MySQL server versions >= 5.1.15.
+This package has been tested to work in MySQL 5.1, 5.5, 5.6, 5.7 and 8. Expected support is all MySQL server versions >= 5.1.15.
 
 ## Installation
 
