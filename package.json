@@ -1,6 +1,6 @@
 {
   "name": "@vlasky/mysql-live-select",
-  "version": "1.2.18",
+  "version": "1.2.19",
   "description": "Live updating MySQL SELECT statements",
   "main": "lib/LiveMysql.js",
   "repository": "https://github.com/vlasky/mysql-live-select",
@@ -23,7 +23,7 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "mysql2": "^v2.2.5",
-    "@vlasky/zongji": "^0.5.5",
+    "@vlasky/zongji": "^0.5.6",
     "ejson": "^2.2.1"
   },
   "devDependencies": {
