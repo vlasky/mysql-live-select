@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.21",
-    "mysql2": "github:sidorares/node-mysql2#810e6a4e0c1a9216596fa9cd5705617da3a1719e",
+    "mysql2": "git+https://github.com/sidorares/node-mysql2#810e6a4e0c1a9216596fa9cd5705617da3a1719e",
     "@vlasky/zongji": "^0.5.6",
     "ejson": "^2.2.1"
   },
