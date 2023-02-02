@@ -22,9 +22,9 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.21",
-    "mysql2": "^v2.3.3",
-    "@vlasky/zongji": "^0.5.8",
-    "ejson": "^2.2.2"
+    "mysql2": "^v3.1.0",
+    "@vlasky/zongji": "^0.5.9",
+    "ejson": "^2.2.3"
   },
   "devDependencies": {
     "nodeunit": "^0.9.1"
