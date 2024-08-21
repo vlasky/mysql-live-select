@@ -1,4 +1,15 @@
+[npm-image]: https://img.shields.io/npm/v/@vlasky/mysql-live-select.svg
+[npm-url]: https://npmjs.com/package/@vlasky/mysql-live-select
+[downloads-image]: https://img.shields.io/npm/dm/@vlasky/mysql-live-select.svg
+[downloads-url]: https://npmjs.com/package/@vlasky/mysql-live-select
+[license-url]: https://github.com/vlasky/mysql-live-select/blob/master/LICENSE
+[license-image]: https://img.shields.io/npm/l/@vlasky/mysql-live-select.svg?maxAge=2592000
+
 # mysql-live-select
+
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
+[![License][license-image]][license-url]
 
 mysql-live-select emits Node.js events when a MySQL query result set changes.
 
@@ -15,7 +26,7 @@ Built using vlasky's fork of [`zongji` Binlog Tailer](https://github.com/vlasky/
 * [NPM Package for Sails.js connection adapter integration](https://github.com/numtel/sails-mysql-live-select)
 * [Analogous package for PostgreSQL, `pg-live-select`](https://github.com/numtel/pg-live-select)
 
-This package has been tested to work in MySQL 5.1, 5.5, 5.6, 5.7 and 8. Expected support is all MySQL server versions >= 5.1.15.
+This package has been tested to work in MySQL 5.1, 5.5, 5.6, 5.7 and 8. Expected to support all MySQL server versions >= 5.1.15.
 
 ## Installation
 
