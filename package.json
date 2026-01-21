@@ -5,7 +5,7 @@
   "main": "lib/LiveMysql.js",
   "repository": "https://github.com/vlasky/mysql-live-select",
   "scripts": {
-    "test": "nodeunit --reporter=minimal test"
+    "test": "node --test test/index.js"
   },
   "keywords": [
     "mysql",
@@ -20,13 +20,13 @@
     "Wen Jia Liu <wj32.64@gmail.com> (https://github.com/wj32)"
   ],
   "license": "MIT",
-  "dependencies": {
-    "lodash": "^4.17.21",
-    "mysql2": "^v3.11.0",
-    "@vlasky/zongji": "^0.5.9",
-    "ejson": "^2.2.3"
+  "engines": {
+    "node": ">=18"
   },
-  "devDependencies": {
-    "nodeunit": "^0.9.1"
+  "dependencies": {
+    "@vlasky/zongji": "^0.5.9",
+    "ejson": "^2.2.3",
+    "lodash": "^4.17.21",
+    "mysql2": "^3.16.1"
   }
 }
