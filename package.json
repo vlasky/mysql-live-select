@@ -24,7 +24,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@vlasky/zongji": "^0.5.9",
+    "@vlasky/zongji": "github:vlasky/zongji#node-mysql2",
     "ejson": "^2.2.3",
     "lodash": "^4.17.21",
     "mysql2": "^3.16.1"
