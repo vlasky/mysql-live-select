@@ -1,13 +1,14 @@
 /* mysql-live-select, MIT License ben@latenightsketches.com
    test/index.js - Test Suite */
-const { test, beforeEach, afterEach } = require('node:test');
-const assert = require('node:assert');
-const _ = require('lodash');
-const LiveMysql = require('../');
-const settings = require('./settings/mysql');
-const querySequence = require('./helpers/querySequence');
-const Connector = require('./helpers/connector');
-const multipleQueriesData = require('./fixtures/multipleQueries');
+import { test, beforeEach, afterEach } from 'node:test';
+import assert from 'node:assert';
+import _ from 'lodash';
+import LiveMysql from '../lib/LiveMysql.js';
+import settings from './settings/mysql.js';
+import querySequence from './helpers/querySequence.js';
+import Connector from './helpers/connector.js';
+import * as multipleQueriesData from './fixtures/multipleQueries.js';
+
 const server = new Connector(settings);
 
 // Helper to ensure done() is only called once per test
@@ -38,7 +39,7 @@ test('basic', (t, rawDone) => {
     querySequence(conn.db, [
       'DROP TABLE IF EXISTS ' + escId(table),
       'CREATE TABLE ' + escId(table) + ' (col INT UNSIGNED)',
-    ], (results) => {
+    ], (_results) => {
       queries.splice(0, queries.length);
 
       const query = 'SELECT * FROM ' + escId(table);
@@ -142,12 +143,12 @@ test('basic', (t, rawDone) => {
       // Perform database operation sequence
       querySequence(conn.db, [
         'INSERT INTO ' + escId(table) + ' (col) VALUES (10)'
-      ], (results) => {
+      ], (_results) => {
         // Wait before updating the row
         setTimeout(() => {
           querySequence(conn.db, [
             'UPDATE ' + escId(table) + ' SET `col` = 15'
-          ], (results) => {
+          ], (_results) => {
             // ...
           });
         }, 100);
@@ -186,7 +187,7 @@ test('multipleQueries', (t, rawDone) => {
         'CREATE TABLE ' + tableEsc + ' (' + columnDefStr + ')',
         'INSERT INTO ' + tableEsc + ' (' + columnList.map(escId).join(', ') +
           ') VALUES ' + initDataStr,
-      ], (results) => {
+      ], (_results) => {
         const actualDiffs = [];
         const actualDatas = [];
         let curQuery = 0;
@@ -208,7 +209,7 @@ test('multipleQueries', (t, rawDone) => {
             setTimeout(() => {
               querySequence(conn.db,
                 [replaceTable(details.queries[curQuery++])],
-                (results) => { /* do nothing with results */ });
+                (_results) => { /* do nothing with results */ });
             }, queryWaitTime);
           }
 
@@ -240,13 +241,13 @@ test('checkConditionWhenQueued', (t, rawDone) => {
       'DROP TABLE IF EXISTS ' + escId(table),
       'CREATE TABLE ' + escId(table) + ' (col INT UNSIGNED)',
       'INSERT INTO ' + escId(table) + ' (col) VALUES (10)',
-    ], (results) => {
+    ], (_results) => {
       let conditionCountUnder1000 = 0;
       let conditionCountOver1000 = 0;
       conn.select('SELECT * FROM ' + escId(table), null, KeySelector.Index(), [{
         table: table,
         database: server.database,
-        condition: (row, newRow, rowDeleted) => {
+        condition: (row, newRow, _rowDeleted) => {
           if(newRow.col < 1000) {
             // Under 1000, checkConditionWhenQueued is false
             // Will not bother rechecking the condition when query is
@@ -274,7 +275,7 @@ test('checkConditionWhenQueued', (t, rawDone) => {
         'UPDATE ' + escId(table) + ' SET `col` = `col` + 5',
         'UPDATE ' + escId(table) + ' SET `col` = `col` + 5',
         'UPDATE ' + escId(table) + ' SET `col` = 1000',
-      ], (results) => {
+      ], (_results) => {
         // Should have only had one condition function call at this point
         conn.dataSourceSettings.checkConditionWhenQueued = true;
 
@@ -283,7 +284,7 @@ test('checkConditionWhenQueued', (t, rawDone) => {
           'UPDATE ' + escId(table) + ' SET `col` = `col` + 5',
           'UPDATE ' + escId(table) + ' SET `col` = `col` + 5',
           'UPDATE ' + escId(table) + ' SET `col` = 2000',
-        ], (results) => {
+        ], (_results) => {
           // Should have seen all of these updates in condition function
         });
       });
@@ -300,7 +301,7 @@ test('pauseAndResume', (t, rawDone) => {
       'DROP TABLE IF EXISTS ' + escId(table),
       'CREATE TABLE ' + escId(table) + ' (col INT UNSIGNED)',
       'INSERT INTO ' + escId(table) + ' (col) VALUES (10)',
-    ], (results) => {
+    ], (_results) => {
       let pauseTime = null;
       let testComplete = false;
       const selectObj = conn.select('SELECT * FROM ' + escId(table), null, KeySelector.Index(), [{
@@ -330,7 +331,7 @@ test('pauseAndResume', (t, rawDone) => {
 
       querySequence(conn.db, [
         'UPDATE ' + escId(table) + ' SET `col` = 15'
-      ], (results) => {
+      ], (_results) => {
         // ...
       });
     });
@@ -341,7 +342,6 @@ test('stopAndActive', (t, rawDone) => {
   const done = onceOnly(rawDone);
   // Test stop() and active() methods on LiveMysqlSelect
   // This test verifies that stopping a select removes it from the query cache
-  const LiveMysqlKeySelector = require('../lib/LiveMysqlKeySelector');
 
   // Use direct database operations to test stop/active without relying on binlog
   server.once('ready', (conn, esc, escId, queries, KeySelector) => {
@@ -350,7 +350,7 @@ test('stopAndActive', (t, rawDone) => {
       'DROP TABLE IF EXISTS ' + escId(table),
       'CREATE TABLE ' + escId(table) + ' (col INT UNSIGNED)',
       'INSERT INTO ' + escId(table) + ' (col) VALUES (10)',
-    ], (results) => {
+    ], (_results) => {
       const query = 'SELECT * FROM ' + escId(table);
       const selectObj = conn.select(query, null, KeySelector.Index(), [{
         table: table,
@@ -391,7 +391,7 @@ test('immediate_disconnection', (t, rawDone) => {
   // Update serverId setting to prevent collision
   settings.serverId++;
 
-  const myTest = new LiveMysql(settings).on('error', (error) => {
+  const myTest = new LiveMysql(settings).on('error', (_error) => {
     errorOccurred = true;
   }).on('ready', () => {
     myTest.end();
@@ -403,7 +403,7 @@ test('immediate_disconnection', (t, rawDone) => {
 
 test('error_invalid_connection', (t, rawDone) => {
   const done = onceOnly(rawDone);
-  const myTest = new LiveMysql({
+  new LiveMysql({
     host: '127.0.0.1',
     port: 12345,
     user: 'not-working',
@@ -416,7 +416,7 @@ test('error_invalid_connection', (t, rawDone) => {
 
 test('error_invalid_connection_callback', (t, rawDone) => {
   const done = onceOnly(rawDone);
-  const myTest = new LiveMysql({
+  new LiveMysql({
     host: '127.0.0.1',
     port: 12345,
     user: 'not-working',
@@ -429,7 +429,6 @@ test('error_invalid_connection_callback', (t, rawDone) => {
 
 test('error_no_db_selected', (t, rawDone) => {
   const done = onceOnly(rawDone);
-  const LiveMysqlKeySelector = require('../lib/LiveMysqlKeySelector');
   server.once('ready', (conn, esc, escId, queries, KeySelector) => {
 
     assert.throws(() => {
@@ -455,7 +454,7 @@ test('error_invalid_query', (t, rawDone) => {
     querySequence(conn.db, [
       'DROP TABLE IF EXISTS ' + escId(table),
       'CREATE TABLE ' + escId(table) + ' (col INT UNSIGNED)',
-    ], (results) => {
+    ], (_results) => {
       conn.select('SELECT notcol FROM ' + escId(table), null, KeySelector.Index(), [{
         table: table,
         database: server.database

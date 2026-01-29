@@ -2,7 +2,15 @@
   "name": "@vlasky/mysql-live-select",
   "version": "1.2.27",
   "description": "Live updating MySQL SELECT statements",
+  "type": "module",
   "main": "lib/LiveMysql.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./lib/LiveMysql.js"
+    }
+  },
   "repository": "https://github.com/vlasky/mysql-live-select",
   "scripts": {
     "test": "node --test test/index.js"
@@ -26,7 +34,13 @@
   "dependencies": {
     "@vlasky/zongji": "github:vlasky/zongji#node-mysql2",
     "ejson": "^2.2.3",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "mysql2": "^3.16.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.23",
+    "@types/node": "^25.1.0",
+    "eslint": "^9.39.2",
+    "typescript": "^5.9.3"
   }
 }

@@ -1,4 +1,4 @@
-module.exports = {
+const settings = {
   host        : 'localhost',
   port        : 3306,
   user        : 'root',
@@ -10,6 +10,7 @@ module.exports = {
 
 if(process.env.TRAVIS){
   // Port to use is passed as variable
-  module.exports.port = process.env.TEST_MYSQL_PORT;
+  settings.port = process.env.TEST_MYSQL_PORT;
 }
 
+export default settings;

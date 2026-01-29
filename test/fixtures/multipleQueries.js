@@ -1,6 +1,6 @@
 // Test fixture for multipleQueries test
 // Uses the new dictionary-based diff format with Columns(['id']) key selector
-exports.characters = {
+export const characters = {
   columns: { id: 'INT UNSIGNED', name: 'VARCHAR(45) NULL', visits: 'INT UNSIGNED' },
   initial: [
     { id: 1, name: 'Celie', visits: 10 },
