@@ -30,6 +30,10 @@ This package has been tested to work in MySQL 5.1, 5.5, 5.6, 5.7 and 8. Expected
 
 ## Installation
 
+* **Requires Node.js 18 or later** (ESM-only package)
+
+* **TypeScript support** included via bundled type definitions
+
 * Add the package to your project:
   ```bash
   $ npm install @vlasky/mysql-live-select
@@ -94,30 +98,47 @@ Event Name | Arguments | Description
 #### Quick Start
 
 ```javascript
-// Example:
-var liveConnection = new LiveMysql(settings);
-var id = 11;
+import LiveMysql, { LiveMysqlKeySelector } from '@vlasky/mysql-live-select';
 
-liveConnection.select('select * from players where `id` = ?', [id],
-LiveMysqlKeySelector.Index(), [ {
-  table: table,
-  condition: function(row, newRow){
-    // Only refresh the results when the row matching the specified id is
-    // changed.
-    return row.id === id
-      // On UPDATE queries, newRow must be checked as well
-      || (newRow && newRow.id === id);
-  }
-} ]).on('update', function(diff, data){
-  // diff contains an object describing the difference since the previous update
-  // data contains an array of rows of the new result set
-  console.log(data);
+const settings = {
+  host: 'localhost',
+  user: 'root',
+  password: 'root',
+  database: 'mydb',
+  serverId: 1,
+};
+
+const liveConnection = new LiveMysql(settings);
+const id = 11;
+
+liveConnection.on('ready', () => {
+  liveConnection.select(
+    'SELECT * FROM players WHERE `id` = ?',
+    [id],
+    LiveMysqlKeySelector.Index(),
+    [{
+      table: 'players',
+      condition: (row, newRow) => {
+        // Only refresh the results when the row matching the specified id is changed.
+        return row.id === id
+          // On UPDATE queries, newRow must be checked as well
+          || (newRow && newRow.id === id);
+      }
+    }]
+  ).on('update', (diff, data) => {
+    // diff contains an object describing the difference since the previous update
+    // data contains a dictionary of rows keyed by the key selector
+    console.log(data);
+  });
+});
+
+liveConnection.on('error', (err) => {
+  console.error(err);
 });
 ```
-See [`example.js`](example.js) for full source...
 
 
-### LiveMysql.prototype.select(query, values, keySelector, triggers)
+### LiveMysql.select(query, values, keySelector, triggers)
 
 Argument | Type | Description
 ---------|------|----------------------------------
@@ -162,15 +183,15 @@ Argument Name | Description
 
 Return `true` when the row data meets the condition to update the result set.
 
-### LiveMysql.prototype.pause()
+### LiveMysql.pause()
 
 Temporarily skip processing of updates from the binary log.
 
-### LiveMysql.prototype.resume()
+### LiveMysql.resume()
 
 Begin processing updates after `pause()`. All active live select instances will be refreshed upon resume.
 
-### LiveMysql.prototype.end()
+### LiveMysql.end()
 
 Close connections and stop checking for updates.
 

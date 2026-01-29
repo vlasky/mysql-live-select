@@ -32,14 +32,16 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@vlasky/zongji": "github:vlasky/zongji#node-mysql2",
+    "@vlasky/zongji": "github:vlasky/zongji#esm",
     "ejson": "^2.2.3",
     "lodash": "^4.17.23",
     "mysql2": "^3.16.1"
   },
   "devDependencies": {
+    "@types/ejson": "^2.2.2",
     "@types/lodash": "^4.17.23",
     "@types/node": "^25.1.0",
+    "@types/punycode": "^2.1.4",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3"
   }
