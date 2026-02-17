@@ -1,6 +1,6 @@
 {
   "name": "@vlasky/mysql-live-select",
-  "version": "1.2.27",
+  "version": "1.3.0",
   "description": "Live updating MySQL SELECT statements",
   "type": "module",
   "main": "lib/LiveMysql.js",
@@ -13,6 +13,7 @@
   },
   "repository": "https://github.com/vlasky/mysql-live-select",
   "scripts": {
+    "pretest": "bash scripts/start-mysql.sh",
     "test": "node --test test/index.js"
   },
   "keywords": [
@@ -32,14 +33,12 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@vlasky/zongji": "github:vlasky/zongji#esm",
+    "@vlasky/zongji": "^0.6.1",
     "ejson": "^2.2.3",
-    "lodash": "^4.17.23",
-    "mysql2": "^3.16.1"
+    "mysql2": "^3.17.2"
   },
   "devDependencies": {
     "@types/ejson": "^2.2.2",
-    "@types/lodash": "^4.17.23",
     "@types/node": "^25.1.0",
     "@types/punycode": "^2.1.4",
     "eslint": "^9.39.2",

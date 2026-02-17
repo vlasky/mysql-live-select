@@ -2,7 +2,6 @@
    test/index.js - Test Suite */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert';
-import _ from 'lodash';
 import LiveMysql from '../lib/LiveMysql.js';
 import settings from './settings/mysql.js';
 import querySequence from './helpers/querySequence.js';
@@ -94,7 +93,7 @@ test('basic', (t, rawDone) => {
             if(secondInstanceInitialized === false) {
               // Check that the diff is correct when initializing from cache
               assert.deepStrictEqual(diff.added, { '0': { col: 10 } });
-              assert.ok(_.isEmpty(diff.removed));
+              assert.strictEqual(Object.keys(diff.removed).length, 0);
               secondInstanceInitialized = true;
             }
 
@@ -113,7 +112,7 @@ test('basic', (t, rawDone) => {
           case 0:
             // Initialized as empty
             assert.strictEqual(dataArray.length, 0);
-            assert.ok(_.isEmpty(diff.added));
+            assert.strictEqual(Object.keys(diff.added).length, 0);
             assert.strictEqual(diff.removed, null);
             break;
           case 1:
@@ -170,7 +169,7 @@ test('multipleQueries', (t, rawDone) => {
       const tableEsc = escId(table);
       const details = multipleQueriesData[queryName];
 
-      const columnDefStr = _.map(details.columns, (typeStr, name) => {
+      const columnDefStr = Object.entries(details.columns).map(([name, typeStr]) => {
         return escId(name) + ' ' + typeStr;
       }).join(', ');
       const columnList = Object.keys(details.columns);
@@ -199,11 +198,11 @@ test('multipleQueries', (t, rawDone) => {
           condition: details.condition
         }]).on('update', (diff, data) => {
           actualDiffs.push(diff);
-          const appliedData = _.cloneDeep(oldData);
+          const appliedData = structuredClone(oldData);
           LiveMysql.applyDiff(appliedData, diff);
           actualDatas.push(appliedData);
 
-          oldData = _.cloneDeep(data);
+          oldData = structuredClone(data);
 
           if(curQuery < details.queries.length) {
             setTimeout(() => {

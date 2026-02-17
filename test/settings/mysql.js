@@ -2,7 +2,7 @@ const settings = {
   host        : 'localhost',
   port        : 3306,
   user        : 'root',
-  password    : 'numtel',
+  password    : 'secret',
   database    : 'live_select_test',
   serverId    : 347,
   minInterval : 200

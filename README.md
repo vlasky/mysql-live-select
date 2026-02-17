@@ -4,29 +4,26 @@
 [downloads-url]: https://npmjs.com/package/@vlasky/mysql-live-select
 [license-url]: https://github.com/vlasky/mysql-live-select/blob/master/LICENSE
 [license-image]: https://img.shields.io/npm/l/@vlasky/mysql-live-select.svg?maxAge=2592000
+[node-image]: https://img.shields.io/node/v/@vlasky/mysql-live-select.svg
 
 # mysql-live-select
 
 [![NPM Version][npm-image]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
+[![Node.js Version][node-image]][downloads-url]
 [![License][license-image]][license-url]
 
 mysql-live-select emits Node.js events when a MySQL query result set changes.
 
 It works by monitoring table row changes written to the MySQL binary log. Each row change is passed to a user-defined trigger function. When the trigger function returns true, its associated query is re-run and the result set is diffed with the previous result set.
 
-NOTE: This version of mysql-live-select differs from numtel's original package in that result sets are treated as dictionaries rather than arrays. The original package's diffing emits incorrect (with respect to the primary key) events when rows are inserted or deleted at any position other than the end of the array. In this version, the identity of each row is determined by a `LiveMysqlKeySelector` that is passed into the `select` function. The most common use case is `LiveMysqlKeySelector.Columns([primary_key_column])`, which ensures that row insertions and deletions are detected based on the value of `primary_key_column`.
+Result sets are treated as dictionaries keyed by a `LiveMysqlKeySelector`, ensuring that diff events correctly reflect row identity. The most common use case is `LiveMysqlKeySelector.Columns([primary_key_column])`, which detects insertions, changes, and deletions based on the value of the primary key column.
 
-There are other changes and additional features. See below for more details.
+Implemented using [`@vlasky/zongji` MySQL binlog tailer](https://github.com/vlasky/zongji) and [`node-mysql2`](https://github.com/sidorares/node-mysql2). This package was originally forked from [`numtel/mysql-live-select`](https://github.com/numtel/mysql-live-select), which used an array-based diffing algorithm.
 
-Built using vlasky's fork of [`zongji` Binlog Tailer](https://github.com/vlasky/zongji) and [`node-mysql2`](https://github.com/sidorares/node-mysql2).
-
-* [Example Application using Express, SockJS and React](https://github.com/numtel/reactive-mysql-example)
 * [Meteor package for reactive MySQL](https://github.com/vlasky/meteor-mysql)
-* [NPM Package for Sails.js connection adapter integration](https://github.com/numtel/sails-mysql-live-select)
-* [Analogous package for PostgreSQL, `pg-live-select`](https://github.com/numtel/pg-live-select)
 
-This package has been tested to work in MySQL 5.1, 5.5, 5.6, 5.7 and 8. Expected to support all MySQL server versions >= 5.1.15.
+Officially supports MySQL 5.7 and later.
 
 ## Installation
 
@@ -64,7 +61,7 @@ This package has been tested to work in MySQL 5.1, 5.5, 5.6, 5.7 and 8. Expected
 
 The `LiveMysql` constructor creates up to 3 connections to your MySQL database:
 
-* (When connection pooling is disabled) Connection for executing `SELECT` queries (exposed `node-mysql` instance as `db` property)
+* (When connection pooling is disabled) Connection for executing `SELECT` queries (exposed `mysql2` instance as `db` property)
 * Replication slave connection
 * `information_schema` connection for column information
 
@@ -74,7 +71,7 @@ When connection pooling is enabled, additional connections are created as needed
 
 Argument | Type | Description
 ---------|------|---------------------------
-`settings` | `object` | An object defining the settings. In addition to the [`node-mysql` connection settings](https://github.com/felixge/node-mysql#connection-options) and [pool settings](https://github.com/felixge/node-mysql#pool-options), the additional settings below are available.
+`settings` | `object` | An object defining the settings. In addition to the [`mysql2` connection settings](https://github.com/sidorares/node-mysql2#connection-options) and [pool settings](https://github.com/sidorares/node-mysql2#pool-options), the additional settings below are available.
 `callback` | `function` | **Deprecated:** callback on connection success/failure. Accepts one argument, `error`. See information below about events emitted.
 
 #### Additional Settings
@@ -210,7 +207,7 @@ Method Name | Arguments | Description
 `stop` | *None* | Stop receiving updates
 `active` | *None* | Return `true` if ready to recieve updates, `false` if `stop()` method has been called.
 
-As well as all of the other methods available on [`EventEmitter`](http://nodejs.org/api/events.html)...
+As well as all of the other methods available on [`EventEmitter`](https://nodejs.org/api/events.html)...
 
 ### Available Events
 
@@ -221,9 +218,15 @@ Event Name | Arguments | Description
 
 ## Running Tests
 
-Tests must be run with a properly configured MySQL server. Configure test settings in `test/settings/mysql.js`.
+Tests require a MySQL server with binary logging enabled. A Docker Compose configuration is included for convenience:
 
-Execute tests using the `npm test` command.
+```bash
+$ docker compose up -d mysql
+```
+
+Connection settings can be modified in `test/settings/mysql.js`.
+
+Execute tests using the `npm test` command (this will automatically start the Docker MySQL container via the pretest script).
 
 ## License
 

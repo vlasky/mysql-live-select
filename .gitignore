@@ -4,3 +4,14 @@
 *.swn
 .npm
 node_modules
+
+#AI tools
+.claude/
+.codex/
+.gemini/
+.mcp/
+.mcp.json
+
+# Local override files
+*.local.md
+
